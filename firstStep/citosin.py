@@ -1,0 +1,6 @@
+cg = input()
+lenWord = (len(cg))
+cg = cg.upper()
+gW = (cg.count('G'))
+cW = (cg.count('C'))
+print((gW + cW) / lenWord * 100)

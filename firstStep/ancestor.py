@@ -55,12 +55,14 @@ class ancestor:
             print('No')
             self.answers.append('No')
 
-    def findAncestor(self, parent, child, num=0):
+    def findAncestor(self, parent, child):
         if child in self.classes[parent]:
             return True
         return self.arrayProcessing(parent, child)
 
     def arrayProcessing(self, mainClass, needClass):
+        if mainClass == needClass:
+            return True
         if mainClass not in self.classes:
             return False
         
@@ -68,8 +70,9 @@ class ancestor:
             return True
 
         for className in self.classes[mainClass]:
-            answer = self.arrayProcessing(className, needClass)
-        return answer
+            if self.arrayProcessing(className, needClass):
+                return True
+        return False
 
 
 ancestor = ancestor()
@@ -77,7 +80,3 @@ while True:
     answer = ancestor.getInput(input())
     if answer == 'stop':
         break
-
-
-print(ancestor.classes)
-print(ancestor.answers)

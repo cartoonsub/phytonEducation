@@ -7,8 +7,9 @@ class Loggable:
 
 class LoggableList(Loggable, list):
     def append(self, elem):
+        list.append(self, elem)
         self.log(elem)
-        # self.list.append(elem)
+        
 
 
 a = LoggableList()

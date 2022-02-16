@@ -38,11 +38,14 @@ class ancestorExceptions():
         
         for mainClass in classes[0].strip().split(' '):
             self.classes[ancestor].append(mainClass)
+            if mainClass in self.classes:
+                self.classes[ancestor].extend(self.classes[mainClass])
             for key, value in self.classes.items():
                 if ancestor in value:
                     if mainClass in self.classes[key]:
                         continue
                     self.classes[key].append(mainClass)
+                    # extend
 
 
     def checkClass(self, className, i):
@@ -61,6 +64,8 @@ class ancestorExceptions():
         for exceptName in self.classes[needClass]:
             if exceptName in self.hierarchy:
                 if currentNum > self.hierarchy[exceptName]:
+                    if needClass in self.answers:
+                        continue
                     self.answers.append(needClass)
 
 
@@ -69,9 +74,11 @@ while True:
     answer = ancestor.getInput(input())
     if answer == 'stop':
         break
+
+for i in ancestor.answers:
+    print(i)
+
 print()
 print(ancestor.classes)
 print(ancestor.hierarchy)
 print()
-for i in ancestor.answers:
-    print(i)

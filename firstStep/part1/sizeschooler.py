@@ -7,7 +7,7 @@ def middleCount(counts):
     return summ / len(counts)
 
 classes = {a: [] for a in range(1, 12)}
-with open('dataset_3380_5.txt', 'r') as file:
+with open('static/dataset_3380_5.txt', 'r') as file:
     for line in file:
         dataLine = line.strip().split('\t')
         key = int(dataLine[0])
@@ -16,7 +16,7 @@ with open('dataset_3380_5.txt', 'r') as file:
         classes[key] = data
 
 # print(classes)
-with open('dateReturn.txt', 'w') as file:
+with open('static/dateReturn.txt', 'w') as file:
     for key, sizes in classes.items():
         print(key, middleCount(sizes), end='')
         print()

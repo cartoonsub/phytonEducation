@@ -1,3 +1,6 @@
+from random import random
+
+
 string = 'abcdefgc'
 
 print(string.find('c'))
@@ -53,6 +56,11 @@ print('=>'.join(number))
 print('\n')
 
 capital = 'London is the capital of Great Britain'
+template = '{1} is the capital of {0}'
 template = '{} is the capital of {}'
-print(template.format('London', 'great britain'))
-print(template.format('vaduz', 'switzerland'))
+template = '{city} is the capital of {country}'
+# print(template.format('London', 'great britain'))
+print(template.format(city='vaduz', country='switzerland'))
+
+x = random()
+print('{:.2f}'.format(x))

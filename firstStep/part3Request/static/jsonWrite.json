@@ -1,0 +1,26 @@
+[
+    {
+        "age": "20",
+        "city": "New York",
+        "name": "John",
+        "scores": [
+            1,
+            2,
+            3,
+            4,
+            5
+        ]
+    },
+    {
+        "age": "21",
+        "city": "London",
+        "name": "Mary",
+        "scores": [
+            1,
+            2,
+            3,
+            4,
+            5
+        ]
+    }
+]

@@ -23,9 +23,14 @@ with open('C:\\phytonProjects\\phytonEducation\\firstStep\\part3Request\\static\
 
 sorted_dict = {}
 sorted_keys = sorted(collection, key=collection.get)
-print(sorted_keys)
+# print(sorted_keys)
 for w in sorted_keys:
     sorted_dict[w] = collection[w]
 
 # {1: 1, 3: 4, 2: 9}
-print(sorted_dict)
+# print(sorted_dict)
+# print(max(sorted_dict, key=sorted_dict.values()))
+# print(sorted(sorted_dict.items()))
+
+print(max(sorted_dict, key=sorted_dict.get))
+print(sorted(sorted_dict.items(), key=lambda x: x[1], reverse=True))

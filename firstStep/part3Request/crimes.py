@@ -9,7 +9,7 @@ with open('C:\\phytonProjects\\phytonEducation\\firstStep\\part3Request\\static\
         rawDate = row[2]
         try:
             date = (datetime.strptime(rawDate, "%m/%d/%Y %I:%M:%S %p"))
-            year = (datetime.date(date).year)
+            year = datetime.date(date).year
             if year != 2015:
                 continue
             primaryType = row[5]
@@ -27,4 +27,5 @@ print(sorted_keys)
 for w in sorted_keys:
     sorted_dict[w] = collection[w]
 
-print(sorted_dict) # {1: 1, 3: 4, 2: 9}
+# {1: 1, 3: 4, 2: 9}
+print(sorted_dict)

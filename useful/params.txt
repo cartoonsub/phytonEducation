@@ -5,3 +5,5 @@
 
 Уточнить про битрейт. Теор. задача: сохранить битрейт видео. 
 Максимальная задача: адаптивный битрейт
+
+Инфо о файле ffmpeg -i "G:\cartoon\steven\Steven Universe 5\su.s05e01e02.Stuck Together.The Trial.mkv"

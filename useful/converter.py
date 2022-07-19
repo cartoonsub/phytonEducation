@@ -1,7 +1,7 @@
 
 import os
 import ffmpeg
-
+import pprint 
 
 def convert_to_mp4(file):
     name, ext = os.path.splitext(file)
@@ -39,17 +39,17 @@ def convert_to_mp4(file):
             print("Упс! Не удается конвертировать файл: ")
 
 
-# path = input('write path: ')
 path = 'C:\\phytonProjects\\phytonEducation\\useful\\'
 
 videoFiles = []
 for root, dirs, files in os.walk(path):
     if not files:
         continue
+    
     for file in files:
         if file.lower().endswith(('.mp4', 'mkv', 'avi', 'flv', 'mov', 'wmv', 'mpg', 'mpeg', 'm4v', '3gp', '3g2', 'm2ts', 'mts', 'ts', 'webm')):
             videoFiles.append(os.path.join(root, file))
-            convert_to_mp4(os.path.join(root, file))
+            # convert_to_mp4(os.path.join(root, file))
 
 dataForConvert = {}
 key = 0
@@ -58,7 +58,7 @@ for file in videoFiles:
     dataForConvert[key] = {}
     dataForConvert[key]['path'] = file
     
-    print(ffmpeg.probe(file))
+    pprint(ffmpeg.probe(file))
     for item in ffmpeg.probe(file)['streams']:
         if item['codec_type'] == 'video':
             dataForConvert[key]['width'] = item['width']

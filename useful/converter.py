@@ -1,5 +1,4 @@
 
-from itertools import count
 import os
 import ffmpeg
 from pprint import pprint
@@ -48,6 +47,14 @@ class Converter:
             except:
                 print("Упс! Не удается конвертировать файл: ")
 
+    def has_key(self, keys, dict):
+        answer = False
+        if keys[0] in dict:
+            if not keys[1:]:
+                return True
+            answer = self.has_key(keys[1:], dict[keys[0]])
+        return answer
+
     def get_video_info(self, file):
         videoInfo = {}
         data = ffmpeg.probe(file)
@@ -62,16 +69,19 @@ class Converter:
                 videoInfo['width'] = item['coded_width']
                 videoInfo['height'] = item['coded_height']
                 videoInfo['codecVideo'] = item['codec_name']
-                if item['tags']['BPS-eng']:
-                    videoInfo['bitrate'] = item['tags']['BPS-eng']
+                
+                if self.has_key(['tags', 'BPS-eng'], item):
+                    videoInfo['bitrateVideo'] = item['tags']['BPS-eng']
             
             if item['codec_type'] == 'audio':
                 videoInfo['audioTracks'][itemNum] = {}
                 videoInfo['audioTracks'][itemNum]['mapAudio'] = itemNum
                 videoInfo['audioTracks'][itemNum]['codecAudio'] = item['codec_name']
-                if item['tags']['BPS-eng']:
+
+                if self.has_key(['tags', 'BPS-eng'], item):
                     videoInfo['audioTracks'][itemNum]['bitrate'] = item['tags']['BPS-eng']
-                if item['tags']['language']:
+
+                if self.has_key(['tags', 'language'], item):
                     videoInfo['audioTracks'][itemNum]['language'] = item['tags']['language']
                 
             itemNum += 1

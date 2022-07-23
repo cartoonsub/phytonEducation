@@ -1,5 +1,6 @@
 
 import os
+import re
 import ffmpeg
 from pprint import pprint
 
@@ -7,7 +8,7 @@ class Converter:
     def __init__(self):
         self.ffmpeg = 'C:/ffmpeg/bin/ffmpeg.exe'
 
-    def convert_to_mp4(file):
+    def convert_to_mp4(files):
         name, ext = os.path.splitext(file)
         out_name = name + ".mp4"
         print("Finished converting {}".format(file))
@@ -35,10 +36,6 @@ class Converter:
 
         ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 1 -an -f mp4  NULL 
         ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 libx264 -b:v 5948k -pass 2 -c:a:1 aac -b:a 192k -movflags +faststart output.mp4
-
-
-
-
         '''
         if os.path.isfile(util_path):
             try:
@@ -106,7 +103,51 @@ class Converter:
                 counter += 1
         return videoFiles
 
+    def prepare_name(self, name):
+        name = name.replace(' ', '')
+        name = re.sub(r'su\.s(\d+)e(\d+)e(\d+)', r"S\1E\2E\3", name, flags=re.IGNORECASE)
+        return name
+
+    def prepare_query(self, files) -> dict:
+        queries = []
+        mainFields = ['path', 'info']
+        if not files:
+            return {}
+        for file in files.values():
+            flag = True
+            for field in mainFields:
+                if field not in file:
+                    flag = False
+            if not flag:
+                continue
+            
+            path = '"' + file['path'] + '"'
+            query = '-y -i ' + path
+
+            name, ext = os.path.splitext(path)
+            name = self.prepare_name(name)
+            outName = name + ".mp4"
+
+            if file['info']['bitrateVideo']:
+                bitrate = file['info']['bitrateVideo']
+            else:
+                bitrate = '4000k'
+
+            if file['info']['codecVideo']:
+                codec = file['info']['codecVideo']
+                if codec == 'h264':
+                    codec = 'libx264' #todo
+            else:
+                codec = 'libx264'
+
+            query = query + ' -c:v ' + codec + ' -b:v ' + bitrate + ' -pass 1 -an -f mp4  NULL'
+            queries.append(query)
+            # ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 1 -an -f mp4  NULL 
+            # ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 libx264 -b:v 5948k -pass 2 -c:a:1 aac -b:a 192k -movflags +faststart output.mp4
+
+        
 files = Converter().prepare_video()
-pprint(files)
+queries = Converter().prepare_query(files)
+print(queries)
 if __name__ == '__main__':
     pass

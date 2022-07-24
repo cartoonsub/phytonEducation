@@ -1,7 +1,7 @@
 
 import os
 import re
-import ffmpeg
+import ffmpeg 
 from pprint import pprint
 
 class Converter:
@@ -13,7 +13,8 @@ class Converter:
         # if os.path.isfile(util_path):
         for query in queries:
             try:
-                os.system(query)
+                # os.system(query)
+                pass
             except:
                 print("Упс! Не удается конвертировать файл: " + query)
 
@@ -123,11 +124,10 @@ class Converter:
             path = '"' + file['path'] + '"'
             query = util_path + ' -y -i ' + path
 
-
             name, ext = os.path.splitext(path)
             name = self.prepare_name(name)
-            outName = name + '.mp4"'
-
+            newName = name + '.mp4'
+            outName = os.path.join(os.path.dirname('C:\\phytonProjects\\phytonEducation\\fuckerd\\'), os.path.basename(newName))
             if self.has_key(['info', 'bitrateVideo'], file):
                 bitrate = str(file['info']['bitrateVideo'])
             else:
@@ -169,6 +169,6 @@ files = Converter().prepare_video()
 # pprint(files)
 queries = Converter().prepare_query(files)
 Converter.convert_to_mp4(queries)
-# print(queries)
+print(queries)
 if __name__ == '__main__':
     pass

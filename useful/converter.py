@@ -8,12 +8,15 @@ class Converter:
     def __init__(self):
         self.ffmpeg = 'C:/ffmpeg/bin/ffmpeg.exe'
 
-    def convert_to_mp4(files):
-        name, ext = os.path.splitext(file)
-        out_name = name + ".mp4"
-        print("Finished converting {}".format(file))
+    def convert_to_mp4(queries):
+        
+        # if os.path.isfile(util_path):
+        for query in queries:
+            try:
+                os.system(query)
+            except:
+                print("Упс! Не удается конвертировать файл: " + query)
 
-        util_path = 'C:/ffmpeg/bin/ffmpeg.exe'
 
         '''
         двухполосный видео в mp4 : убрал ( -vtag xvid ) - возможно не будет работать на тв 
@@ -37,12 +40,6 @@ class Converter:
         ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 1 -an -f mp4  NULL 
         ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 libx264 -b:v 5948k -pass 2 -c:a:1 aac -b:a 192k -movflags +faststart output.mp4
         '''
-        if os.path.isfile(util_path):
-            try:
-                # os.system(util_path + ' -i ' + '' +' ' + 'output_file')
-                pass
-            except:
-                print("Упс! Не удается конвертировать файл: ")
 
     def has_key(self, keys, dict):
         answer = False
@@ -169,8 +166,9 @@ class Converter:
         return queries
         
 files = Converter().prepare_video()
-pprint(files)
+# pprint(files)
 queries = Converter().prepare_query(files)
-print(queries)
+Converter.convert_to_mp4(queries)
+# print(queries)
 if __name__ == '__main__':
     pass

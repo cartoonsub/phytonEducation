@@ -105,11 +105,13 @@ class Converter:
 
     def prepare_name(self, name):
         name = name.replace(' ', '')
-        name = re.sub(r'su\.s(\d+)e(\d+)e(\d+)', r"S\1E\2E\3", name, flags=re.IGNORECASE)
+        name = name.replace('\"\'', '')
+        name = re.sub(r'su\.s(\d+)e(\d+)e(\d+)', r"S\1E\2E\3.DUB", name, flags=re.IGNORECASE)
         return name
 
     def prepare_query(self, files) -> dict:
         queries = []
+        util_path = 'C:/ffmpeg/bin/ffmpeg.exe'
         mainFields = ['path', 'info']
         if not files:
             return {}
@@ -122,14 +124,15 @@ class Converter:
                 continue
             
             path = '"' + file['path'] + '"'
-            query = '-y -i ' + path
+            query = util_path + ' -y -i ' + path
+
 
             name, ext = os.path.splitext(path)
             name = self.prepare_name(name)
-            outName = name + ".mp4"
+            outName = name + '.mp4"'
 
             if file['info']['bitrateVideo']:
-                bitrate = file['info']['bitrateVideo']
+                bitrate = str(file['info']['bitrateVideo'])
             else:
                 bitrate = '4000k'
 
@@ -142,9 +145,27 @@ class Converter:
 
             query = query + ' -c:v ' + codec + ' -b:v ' + bitrate + ' -pass 1 -an -f mp4  NULL'
             queries.append(query)
-            # ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 1 -an -f mp4  NULL 
-            # ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 libx264 -b:v 5948k -pass 2 -c:a:1 aac -b:a 192k -movflags +faststart output.mp4
 
+            audio = {}
+            for audioTrack in file['info']['audioTracks'].values():
+                if audioTrack['language'] == 'eng':
+                    continue
+                mapAudio = audioTrack['mapAudio']
+                if audioTrack['bitrate']:
+                    audio['bitrate'] = str(audioTrack['bitrate'])
+                else:
+                    audio['bitrate'] = '192k'
+                audio['map'] = str(mapAudio)
+                
+                # audio = ' -map 0:' + str(mapAudio) + ' -c:a:' + str(mapAudio) + ' ' + audioTrack['codecAudio'] + ' -b:a ' + bitrate
+                
+            query = ''
+            query = util_path + ' -y -i ' + path + ' -map 0:0'
+            query = query + ' -map 0:' + audio['map'] + ' -c:v:0 libx264 -b:v ' + bitrate + ' -pass 2 -c:a:' + audio['map'] + ' aac -b:a ' + audio['bitrate'] + ' -movflags +faststart ' + outName
+            queries.append(query)
+            # ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 1 -an -f mp4  NULL 
+            # ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 libx264 -b:v 5948k -pass 2 -c:a:1 aac -b:a 192k -movflags +faststart output.mp4 
+        return queries
         
 files = Converter().prepare_video()
 queries = Converter().prepare_query(files)

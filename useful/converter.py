@@ -131,7 +131,7 @@ class Converter:
             name = self.prepare_name(name)
             outName = name + '.mp4"'
 
-            if file['info']['bitrateVideo']:
+            if self.has_key(['info', 'bitrateVideo'], file):
                 bitrate = str(file['info']['bitrateVideo'])
             else:
                 bitrate = '4000k'
@@ -147,11 +147,12 @@ class Converter:
             queries.append(query)
 
             audio = {}
+            
             for audioTrack in file['info']['audioTracks'].values():
                 if audioTrack['language'] == 'eng':
                     continue
                 mapAudio = audioTrack['mapAudio']
-                if audioTrack['bitrate']:
+                if 'bitrate' in audioTrack:
                     audio['bitrate'] = str(audioTrack['bitrate'])
                 else:
                     audio['bitrate'] = '192k'
@@ -168,6 +169,7 @@ class Converter:
         return queries
         
 files = Converter().prepare_video()
+pprint(files)
 queries = Converter().prepare_query(files)
 print(queries)
 if __name__ == '__main__':

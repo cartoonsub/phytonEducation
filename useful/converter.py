@@ -13,7 +13,7 @@ class Converter:
         # if os.path.isfile(util_path):
         for query in queries:
             try:
-                # os.system(query)
+                os.system(query)
                 pass
             except:
                 print("Упс! Не удается конвертировать файл: " + query)
@@ -127,7 +127,7 @@ class Converter:
             name, ext = os.path.splitext(path)
             name = self.prepare_name(name)
             newName = name + '.mp4'
-            outName = os.path.join(os.path.dirname('C:\\phytonProjects\\phytonEducation\\fuckerd\\'), os.path.basename(newName))
+            outName = os.path.join(os.path.dirname('G:\pythonTest\\done\\'), os.path.basename(newName))
             if self.has_key(['info', 'bitrateVideo'], file):
                 bitrate = str(file['info']['bitrateVideo'])
             else:
@@ -165,10 +165,9 @@ class Converter:
             # ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 libx264 -b:v 5948k -pass 2 -c:a:1 aac -b:a 192k -movflags +faststart output.mp4 
         return queries
         
-files = Converter().prepare_video()
+files = Converter().prepare_video(folder='G:\\pythonTest')
 # pprint(files)
 queries = Converter().prepare_query(files)
 Converter.convert_to_mp4(queries)
-print(queries)
 if __name__ == '__main__':
     pass

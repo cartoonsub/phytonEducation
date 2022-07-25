@@ -5,12 +5,13 @@ def beginning_zeros(number: str) -> int:
             count += 1
         else:
             break
+    print(len(number))
     return count
-
+    return len(number) - len(number.lstrip('0'))
 
 if __name__ == '__main__':
-    print("Example:")
-    print(beginning_zeros('100'))
+    # print("Example:")
+    # print(beginning_zeros('100'))
 
     # These "asserts" are used for self-checking and not for an auto-testing
     assert beginning_zeros('100') == 0

@@ -7,7 +7,7 @@ test = {
     'key2': {'bitrateEng': {}},
     'videos': {
         'bitrate': {
-            'bitrateEng' : True,
+            'bitrateEng' : False,
         }
     }
 
@@ -15,7 +15,13 @@ test = {
 
 if 'bitrateEng' in test.keys():
     print('bitrateEng is in test')
-
+    
+try:
+    result=test['videos']['bitrate']['bitrateEng']
+except KeyError:
+    print('Not found')
+else:
+    print(f'result={result}')
 # if not 'bitrateEngs' in test['video']['bitrate']:
 #     print('fuck')
 # for k in test.keys():

@@ -1,7 +1,14 @@
-def sum_numbers(text: str) -> int:
-    # your code here
-    return 0
+import re
 
+def sum_numbers(text: str) -> int:
+    matches = re.findall(r"(\b\d+\b)", text, re.IGNORECASE)
+    sum = 0
+    for num in matches:
+        sum += int(num)
+    return sum
+
+    return sum(map(int, filter(str.isdigit, text.split())))
+    sum_numbers = lambda text: sum(int(word) for word in text.split() if word.isdigit())
 
 if __name__ == "__main__":
     print("Example:")

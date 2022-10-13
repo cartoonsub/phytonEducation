@@ -5,37 +5,24 @@ import ffmpeg
 from pprint import pprint
 from time import sleep
 
-'''
-        двухполосный видео в mp4 : убрал ( -vtag xvid ) - возможно не будет работать на тв 
-        Вроде лучший вариант для использования:
-        ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 1 -an -f mp4  NULL 
-
-        ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 2 -c:a aac -b:a 192k -movflags +faststart output.mp4
-
-
-        без потери качества todo: проверить AAC для аудио и x264 для видео 
-        подойдет для скорости
-        ffmpeg -i "C:\\phytonProjects\\phytonEducation\\useful\\su.s05e01e02.mkv" -vcodec copy -acodec copy -movflags +faststart output.mp4
-
-        Копия видео + конвертация аудио в web поддержку: проверить AAC and h264
-        ffmpeg -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -vcodec copy -acodec aac -movflags +faststart output.mp4
-
-        Использование разных дорожек:
-        ffmpeg -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 copy -c:a:1 aac -b:a 320k -movflags +faststart output.mp4
-        ffmpeg -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -map 0:2 -c:v:0 copy -c:a:1 aac -b:a 320k -c:a:2 aac -b:a 92k -movflags +faststart output.mp4
-
-        ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 1 -an -f mp4  NULL 
-        ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 libx264 -b:v 5948k -pass 2 -c:a:1 aac -b:a 192k -movflags +faststart output.mp4
-'''
-
 
 class Converter:
-    def __init__(self):
+    def __init__(self, folder='C:\\phytonProjects\\phytonEducation\\useful\\'):
         self.ffmpeg = 'C:/ffmpeg/bin/ffmpeg.exe'
+        self.folder = folder
+
+    def run(self):
+        files = self.prepare_video()
+        if not files:
+            print('Не найдены файлы для конвертации')
+            return
+        queries = self.prepare_query(files)
+        if not queries:
+            print('Не удалось создать запросы для ffmpeg')
+            return
+        self.convert_to_mp4(queries)
 
     def convert_to_mp4(queries):
-
-        # if os.path.isfile(util_path):
         for query in queries:
             try:
                 # os.system(query)
@@ -89,10 +76,10 @@ class Converter:
 
         return videoInfo
 
-    def prepare_video(self, folder='C:\\phytonProjects\\phytonEducation\\useful\\'):
+    def prepare_video(self):
         videoFiles = {}
         counter = 0
-        for root, dirs, files in os.walk(folder):
+        for root, dirs, files in os.walk(self.folder):
             if not files:
                 continue
 
@@ -115,7 +102,6 @@ class Converter:
 
     def prepare_query(self, files) -> dict:
         queries = []
-        util_path = 'C:/ffmpeg/bin/ffmpeg.exe'
         mainFields = ['path', 'info']
         if not files:
             return {}
@@ -128,7 +114,7 @@ class Converter:
                 continue
 
             path = '"' + file['path'] + '"'
-            query = util_path + ' -y -i ' + path
+            query = self.ffmpeg + ' -y -i ' + path
 
             name, ext = os.path.splitext(path)
             name = self.prepare_name(name)
@@ -150,7 +136,7 @@ class Converter:
                 # audio = ' -map 0:' + str(mapAudio) + ' -c:a:' + str(mapAudio) + ' ' + audioTrack['codecAudio'] + ' -b:a ' + bitrate
 
             query = ''
-            query = util_path + ' -y -i ' + path + ' -map 0:0'
+            query = self.ffmpeg + ' -y -i ' + path + ' -map 0:0'
             query = query + ' -map 0:' + audio['map'] + ' -c:v:0 libx264 -b:v ' + bitrate + ' -pass 2 -c:a:' + \
                 audio['map'] + ' aac -b:a ' + audio['bitrate'] + \
                 ' -movflags +faststart ' + outName
@@ -187,10 +173,34 @@ class Converter:
             # if audioTrack['language'] == 'Yet Another Studio':
             #     break
 
+Converter = Converter(folder='G:\\cartoon\\gumball\\1season\\sound')
+Converter.run()
 
-files = Converter().prepare_video(folder='G:\\cartoon\\gumball\\1season\\sound')
-queries = Converter().prepare_query(files)
-pprint(queries)
-Converter.convert_to_mp4(queries)
 if __name__ == '__main__':
     pass
+
+
+
+
+'''
+        двухполосный видео в mp4 : убрал ( -vtag xvid ) - возможно не будет работать на тв 
+        Вроде лучший вариант для использования:
+        ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 1 -an -f mp4  NULL 
+
+        ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 2 -c:a aac -b:a 192k -movflags +faststart output.mp4
+
+
+        без потери качества todo: проверить AAC для аудио и x264 для видео 
+        подойдет для скорости
+        ffmpeg -i "C:\\phytonProjects\\phytonEducation\\useful\\su.s05e01e02.mkv" -vcodec copy -acodec copy -movflags +faststart output.mp4
+
+        Копия видео + конвертация аудио в web поддержку: проверить AAC and h264
+        ffmpeg -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -vcodec copy -acodec aac -movflags +faststart output.mp4
+
+        Использование разных дорожек:
+        ffmpeg -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 copy -c:a:1 aac -b:a 320k -movflags +faststart output.mp4
+        ffmpeg -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -map 0:2 -c:v:0 copy -c:a:1 aac -b:a 320k -c:a:2 aac -b:a 92k -movflags +faststart output.mp4
+
+        ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 1 -an -f mp4  NULL 
+        ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 libx264 -b:v 5948k -pass 2 -c:a:1 aac -b:a 192k -movflags +faststart output.mp4
+'''

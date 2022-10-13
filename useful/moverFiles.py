@@ -1,20 +1,36 @@
+import re
 import os
 import shutil
 
-os.chdir('G:/cartoonsub/stevenuniverse/S06_future')
+from soupsieve import match
+
+os.chdir('G:\\cartoonsub\\stevenuniverse\\S06_future_done\\orig')
 curentDir = os.getcwd()
-print(curentDir)
 
 for root, dirs, files in os.walk(curentDir):
+    if root.find('converted') > -1:
+        pass
+    
     if not files:
         continue
     for file in files:
-        path = root + '\\' + file
-        shutil.move(path, r'G:/cartoonsub/stevenuniverse/S06_future/')
-        print('Moved:', path)
+        if file.lower().find('original') == -1:
+            pass
+        path = root + '\\' + file\
+        
+        file_oldname = os.path.join(root, file)
 
-source_folder = r"E:\pynative\reports\\"
-destination_folder = r"E:\pynative\account\\"
+        # matches = re.search(r'e(\d+)\.(\w+)', file)
+        matches = re.search(r'S(\d+)E(\d+)', file, re.IGNORECASE)
+        file_newname_newfile = os.path.join(root, "S06" + "E" + matches[2] + "ORIGINAL" + ".mp4")
+
+        # newFileName=shutil.move(file_oldname, file_newname_newfile)
+        print(file_newname_newfile)
+        # shutil.move(path, r'G:/cartoonsub/stevenuniverse/S06_future/converted/')
+        # print('Moved:', path)
+
+# source_folder = r"E:\pynative\reports\\"
+# destination_folder = r"E:\pynative\account\\"
 
 # for file_name in os.listdir(source_folder):
 #     # construct full file path

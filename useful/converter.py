@@ -1,4 +1,3 @@
-from cmath import inf
 import os
 import re
 import ffmpeg
@@ -11,6 +10,7 @@ class Converter:
         self.ffmpeg = 'C:/ffmpeg/bin/ffmpeg.exe'
         self.folder = folder
         self.outFolder = outFolder
+        self.bitrateVideo = '3000k'
 
     def run(self):
         files = self.prepare_video()
@@ -92,29 +92,6 @@ class Converter:
         
         return videoInfo
 
-    def convert_to_mp4(self, queries):
-        for query in queries:
-            try:
-                # os.system(query)
-                print(query)
-            except:
-                print("Упс! Не удается конвертировать файл: " + query)
-
-    def has_key(self, keys, dict):
-        answer = False
-        if keys[0] in dict:
-            if not keys[1:]:
-                return True
-            answer = self.has_key(keys[1:], dict[keys[0]])
-        return answer
-
-    def prepare_name(self, name):
-        name = name.replace(' ', '')
-        name = name.replace('\"\'', '')
-        name = re.sub(r'su\.s(\d+)e(\d+)e(\d+)',
-                      r"S\1E\2E\3.DUB", name, flags=re.IGNORECASE)
-        return name
-
     def prepare_query(self, files) -> dict:
         queries = []
         mainFields = ['path', 'info']
@@ -137,9 +114,8 @@ class Converter:
             outName = os.path.join(os.path.dirname(self.outFolder), os.path.basename(newName))
             
             if self.has_key(['info', 'bitrateVideo'], file):
-                bitrate = str(file['info']['bitrateVideo'])
-            else:
-                bitrate = '2500k'
+                self.bitrateVideo = str(file['info']['bitrateVideo'])
+
             query = self.setQueryPass1(file, bitrate, query)
             queries.append(query)
 
@@ -186,6 +162,29 @@ class Converter:
             audio['map'] = str(mapAudio)
             # if audioTrack['language'] == 'Yet Another Studio':
             #     break
+
+    def convert_to_mp4(self, queries):
+        for query in queries:
+            try:
+                # os.system(query)
+                print(query)
+            except:
+                print("Упс! Не удается конвертировать файл: " + query)
+
+    def has_key(self, keys, dict):
+        answer = False
+        if keys[0] in dict:
+            if not keys[1:]:
+                return True
+            answer = self.has_key(keys[1:], dict[keys[0]])
+        return answer
+
+    def prepare_name(self, name):
+        name = name.replace(' ', '')
+        name = name.replace('\"\'', '')
+        name = re.sub(r'su\.s(\d+)e(\d+)e(\d+)',
+                      r"S\1E\2E\3.DUB", name, flags=re.IGNORECASE)
+        return name
 
 Converter = Converter(folder='G:\\cartoon\\gumball\\1season\\sound\\test')
 Converter.run()

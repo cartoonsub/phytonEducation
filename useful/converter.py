@@ -1,3 +1,4 @@
+from cmath import inf
 import os
 import re
 import ffmpeg
@@ -6,9 +7,10 @@ from time import sleep
 
 
 class Converter:
-    def __init__(self, folder='C:\\phytonProjects\\phytonEducation\\useful\\'):
+    def __init__(self, folder='C:\\phytonProjects\\phytonEducation\\useful\\', outFolder='C:\\phytonProjects\\phytonEducation\\useful\\'):
         self.ffmpeg = 'C:/ffmpeg/bin/ffmpeg.exe'
         self.folder = folder
+        self.outFolder = outFolder
 
     def run(self):
         files = self.prepare_video()
@@ -34,7 +36,9 @@ class Converter:
 
                 filepath = os.path.join(root, file)
                 info = self.get_video_info(filepath)
+                
                 if info is None:
+                    print(str(counter) + 'Не удалось получить данные из ' + filepath)
                     continue
 
                 videoFiles[counter] = {}
@@ -49,6 +53,7 @@ class Converter:
         if not data['streams']:
             return None
 
+        flag = False
         itemNum = 0
         videoInfo['audioTracks'] = {}
         for item in data['streams']:
@@ -58,14 +63,15 @@ class Converter:
                 videoInfo['height'] = item['coded_height']
                 videoInfo['codecVideo'] = item['codec_name']
 
+                # todo - find other bitrate options 
                 if self.has_key(['tags', 'BPS-eng'], item):
                     videoInfo['bitrateVideo'] = item['tags']['BPS-eng']
+                flag = True
 
             if item['codec_type'] == 'audio':
                 videoInfo['audioTracks'][itemNum] = {}
                 videoInfo['audioTracks'][itemNum]['mapAudio'] = itemNum
                 videoInfo['audioTracks'][itemNum]['codecAudio'] = item['codec_name']
-                # videoInfo['audioTracks'][itemNum]['title'] = item['title']
 
                 if self.has_key(['tags', 'BPS-eng'], item):
                     videoInfo['audioTracks'][itemNum]['bitrate'] = item['tags']['BPS-eng']
@@ -79,9 +85,14 @@ class Converter:
                     videoInfo['audioTracks'][itemNum]['language'] = item['tags']['title']
             itemNum += 1
 
+        if not videoInfo['audioTracks']: # todo - doesn't need for mute video
+            return {}
+        if flag == False:
+            return {}
+        
         return videoInfo
 
-    def convert_to_mp4(queries):
+    def convert_to_mp4(self, queries):
         for query in queries:
             try:
                 # os.system(query)
@@ -123,14 +134,13 @@ class Converter:
             name, ext = os.path.splitext(path)
             name = self.prepare_name(name)
             newName = name + '.mp4'
-            outName = os.path.join(os.path.dirname('G:\\cartoonsub\\stevenuniverse\\S06_future_done\\'), os.path.basename(newName))
-            
+            outName = os.path.join(os.path.dirname(self.outFolder), os.path.basename(newName))
             
             if self.has_key(['info', 'bitrateVideo'], file):
                 bitrate = str(file['info']['bitrateVideo'])
             else:
                 bitrate = '2500k'
-            query = self.setQueryPass1(file, bitrate)
+            query = self.setQueryPass1(file, bitrate, query)
             queries.append(query)
 
             audio = self.setAudio(file)
@@ -149,7 +159,7 @@ class Converter:
             # ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 libx264 -b:v 5948k -pass 2 -c:a:1 aac -b:a 192k -movflags +faststart output.mp4
         return queries
 
-    def setQueryPass1(self, file, bitrate) -> str:
+    def setQueryPass1(self, file, bitrate, query) -> str:
         if file['info']['codecVideo']:
             codec = file['info']['codecVideo']
         if codec == 'h264':

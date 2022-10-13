@@ -4,13 +4,13 @@ import ffmpeg
 from pprint import pprint
 from time import sleep
 
-
 class Converter:
     def __init__(self, folder='C:\\phytonProjects\\phytonEducation\\useful\\', outFolder='C:\\phytonProjects\\phytonEducation\\useful\\'):
         self.ffmpeg = 'C:/ffmpeg/bin/ffmpeg.exe'
         self.folder = folder
         self.outFolder = outFolder
-        self.bitrateVideo = '3000k'
+        self.bitrateVideo = '5000k'
+        self.bitrateAudio = '192k'
 
     def run(self):
         files = self.prepare_video()
@@ -77,6 +77,8 @@ class Converter:
                     videoInfo['audioTracks'][itemNum]['bitrate'] = item['tags']['BPS-eng']
                 if self.has_key(['tags', 'BPS'], item):
                     videoInfo['audioTracks'][itemNum]['bitrate'] = item['tags']['BPS']
+                if 'bit_rate' in item:
+                    videoInfo['audioTracks'][itemNum]['bitrate'] = item['bit_rate']
 
                 if self.has_key(['tags', 'language'], item):
                     videoInfo['audioTracks'][itemNum]['language'] = item['tags']['language']
@@ -116,40 +118,41 @@ class Converter:
             if self.has_key(['info', 'bitrateVideo'], file):
                 self.bitrateVideo = str(file['info']['bitrateVideo'])
 
-            query = self.setQueryPass1(file, bitrate, query)
-            queries.append(query)
-
             audio = self.setAudio(file)
             if not audio:
                 print('Не удалось получить аудио дорожку' + name)
                 continue
                 # audio = ' -map 0:' + str(mapAudio) + ' -c:a:' + str(mapAudio) + ' ' + audioTrack['codecAudio'] + ' -b:a ' + bitrate
 
+            query = self.setQueryPass1(file, query)
+            queries.append(query)
+
             query = ''
             query = self.ffmpeg + ' -y -i ' + path + ' -map 0:0'
-            query = query + ' -map 0:' + audio['map'] + ' -c:v:0 libx264 -b:v ' + bitrate + ' -pass 2 -c:a:' + \
-                audio['map'] + ' aac -b:a ' + audio['bitrate'] + \
-                ' -movflags +faststart ' + outName
+            query = query + ' -map 0:' + audio['map'] + ' -c:v:0 libx264 -b:v ' + self.bitrateVideo + ' -pass 2 -c:a:' + audio['map'] + ' aac -b:a ' + audio['bitrate'] + ' -movflags +faststart ' + outName
             queries.append(query)
             # ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 1 -an -f mp4  NULL
             # ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 libx264 -b:v 5948k -pass 2 -c:a:1 aac -b:a 192k -movflags +faststart output.mp4
         return queries
 
-    def setQueryPass1(self, file, bitrate, query) -> str:
+    def setQueryPass1(self, file, query) -> str:
         if file['info']['codecVideo']:
             codec = file['info']['codecVideo']
         if codec == 'h264':
-            codec = 'libx264'  # todo
+            codec = 'libx264'  # todo - maybe we can add other codecs
         else:
             codec = 'libx264'
-        query = query + ' -c:v ' + codec + ' -b:v ' + bitrate + ' -pass 1 -an -f mp4  NULL'
+        query = query + ' -c:v ' + codec + ' -b:v ' + self.bitrateVideo + ' -pass 1 -an -f mp4 ' + self.outFolder + 'NULL' # NULL
 
         return query
 
     def setAudio(self, file) -> dict:
         audio = {}
-        return audio
         for audioTrack in file['info']['audioTracks'].values():
+            language = ''
+            if 'language' in audioTrack:
+                language = audioTrack['language']
+
             # if audioTrack['language'] == 'eng':
             #     continue
             # if audioTrack['language'] == 'Original':
@@ -158,16 +161,20 @@ class Converter:
             if 'bitrate' in audioTrack:
                 audio['bitrate'] = str(audioTrack['bitrate'])
             else:
-                audio['bitrate'] = '192k'
+                audio['bitrate'] = self.bitrateAudio
             audio['map'] = str(mapAudio)
             # if audioTrack['language'] == 'Yet Another Studio':
             #     break
+            if language == 'rus':
+                break
+        
+        return audio
 
     def convert_to_mp4(self, queries):
         for query in queries:
             try:
-                # os.system(query)
                 print(query)
+                os.system(query)
             except:
                 print("Упс! Не удается конвертировать файл: " + query)
 
@@ -186,12 +193,13 @@ class Converter:
                       r"S\1E\2E\3.DUB", name, flags=re.IGNORECASE)
         return name
 
-Converter = Converter(folder='G:\\cartoon\\gumball\\1season\\sound\\test')
+folder = 'G:\\cartoon\\gumball\\1season\\sound\\test\\'
+outFolder = 'G:\\cartoon\\gumball\\1season\\sound\\output\\'
+Converter = Converter(folder=folder, outFolder=outFolder)
 Converter.run()
 
 if __name__ == '__main__':
     pass
-
 
 '''
         двухполосный видео в mp4 : убрал ( -vtag xvid ) - возможно не будет работать на тв 

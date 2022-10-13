@@ -1,4 +1,3 @@
-
 import os
 import re
 import ffmpeg
@@ -22,28 +21,34 @@ class Converter:
             return
         self.convert_to_mp4(queries)
 
-    def convert_to_mp4(queries):
-        for query in queries:
-            try:
-                # os.system(query)
-                print(query)
-            except:
-                print("Упс! Не удается конвертировать файл: " + query)
+    def prepare_video(self):
+        videoFiles = {}
+        counter = 0
+        for root, dirs, files in os.walk(self.folder):
+            if not files:
+                continue
 
-    def has_key(self, keys, dict):
-        answer = False
-        if keys[0] in dict:
-            if not keys[1:]:
-                return True
-            answer = self.has_key(keys[1:], dict[keys[0]])
-        return answer
+            for file in files:
+                if not file.lower().endswith(('.mp4', 'mkv', 'avi', 'flv', 'mov', 'wmv', 'mpg', 'mpeg', 'm4v', '3gp', '3g2', 'm2ts', 'mts', 'ts', 'webm')):
+                    continue
+
+                filepath = os.path.join(root, file)
+                info = self.get_video_info(filepath)
+                if info is None:
+                    continue
+
+                videoFiles[counter] = {}
+                videoFiles[counter]['path'] = filepath
+                videoFiles[counter]['info'] = info
+                counter += 1
+        return videoFiles
 
     def get_video_info(self, file):
         videoInfo = {}
         data = ffmpeg.probe(file)
         if not data['streams']:
             return None
-        # pprint(data['streams'])
+
         itemNum = 0
         videoInfo['audioTracks'] = {}
         for item in data['streams']:
@@ -76,22 +81,21 @@ class Converter:
 
         return videoInfo
 
-    def prepare_video(self):
-        videoFiles = {}
-        counter = 0
-        for root, dirs, files in os.walk(self.folder):
-            if not files:
-                continue
+    def convert_to_mp4(queries):
+        for query in queries:
+            try:
+                # os.system(query)
+                print(query)
+            except:
+                print("Упс! Не удается конвертировать файл: " + query)
 
-            for file in files:
-                if not file.lower().endswith(('.mp4', 'mkv', 'avi', 'flv', 'mov', 'wmv', 'mpg', 'mpeg', 'm4v', '3gp', '3g2', 'm2ts', 'mts', 'ts', 'webm')):
-                    continue
-                filepath = os.path.join(root, file)
-                videoFiles[counter] = {}
-                videoFiles[counter]['path'] = filepath
-                videoFiles[counter]['info'] = self.get_video_info(filepath)
-                counter += 1
-        return videoFiles
+    def has_key(self, keys, dict):
+        answer = False
+        if keys[0] in dict:
+            if not keys[1:]:
+                return True
+            answer = self.has_key(keys[1:], dict[keys[0]])
+        return answer
 
     def prepare_name(self, name):
         name = name.replace(' ', '')
@@ -173,13 +177,11 @@ class Converter:
             # if audioTrack['language'] == 'Yet Another Studio':
             #     break
 
-Converter = Converter(folder='G:\\cartoon\\gumball\\1season\\sound')
+Converter = Converter(folder='G:\\cartoon\\gumball\\1season\\sound\\test')
 Converter.run()
 
 if __name__ == '__main__':
     pass
-
-
 
 
 '''

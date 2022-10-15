@@ -5,12 +5,13 @@ from pprint import pprint
 from time import sleep
 
 class Converter:
-    def __init__(self, folder='C:\\phytonProjects\\phytonEducation\\useful\\', outFolder='C:\\phytonProjects\\phytonEducation\\useful\\'):
+    def __init__(self, folder='C:\\phytonProjects\\phytonEducation\\useful\\', outFolder='C:\\phytonProjects\\phytonEducation\\useful\\', convert=False):
         self.ffmpeg = 'C:/ffmpeg/bin/ffmpeg.exe'
         self.folder = folder
         self.outFolder = outFolder
         self.bitrateVideo = '5000k'
         self.bitrateAudio = '192k'
+        self.convert = convert
 
     def run(self):
         files = self.prepare_video()
@@ -174,6 +175,9 @@ class Converter:
         for query in queries:
             try:
                 print(query)
+                print('')
+                if self.convert == False:
+                    continue
                 os.system(query)
             except:
                 print("Упс! Не удается конвертировать файл: " + query)
@@ -195,7 +199,7 @@ class Converter:
 
 folder = 'G:\\cartoon\\gumball\\1season\\sound\\test\\'
 outFolder = 'G:\\cartoon\\gumball\\1season\\sound\\output\\'
-Converter = Converter(folder=folder, outFolder=outFolder)
+Converter = Converter(folder=folder, outFolder=outFolder, convert=True)
 Converter.run()
 
 if __name__ == '__main__':

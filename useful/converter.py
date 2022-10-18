@@ -18,7 +18,8 @@ class Converter:
         if not files:
             print('Не найдены файлы для конвертации')
             return
-        queries = self.prepare_query(files)
+        # queries = self.prepare_query_video(files)
+        queries = self.prepare_query_get_audio(files)
         if not queries:
             print('Не удалось создать запросы для ffmpeg')
             return
@@ -74,6 +75,9 @@ class Converter:
                 videoInfo['audioTracks'][itemNum]['mapAudio'] = itemNum
                 videoInfo['audioTracks'][itemNum]['codecAudio'] = item['codec_name']
 
+                if 'codec_time_base' in item:
+                    videoInfo['audioTracks'][itemNum]['frequency '] = re.sub(r'1\/', r"", item['codec_time_base'])
+
                 if self.has_key(['tags', 'BPS-eng'], item):
                     videoInfo['audioTracks'][itemNum]['bitrate'] = item['tags']['BPS-eng']
                 if self.has_key(['tags', 'BPS'], item):
@@ -95,7 +99,7 @@ class Converter:
         
         return videoInfo
 
-    def prepare_query(self, files) -> dict:
+    def prepare_query_video(self, files) -> dict:
         queries = []
         mainFields = ['path', 'info']
         if not files:
@@ -112,7 +116,7 @@ class Converter:
             query = self.ffmpeg + ' -y -i ' + path
 
             name, ext = os.path.splitext(path)
-            name = self.prepare_name(name)
+            name = self.prepareName(name)
             newName = name + '.mp4'
             outName = os.path.join(os.path.dirname(self.outFolder), os.path.basename(newName))
             
@@ -190,15 +194,62 @@ class Converter:
             answer = self.has_key(keys[1:], dict[keys[0]])
         return answer
 
-    def prepare_name(self, name):
+    def prepareName(self, name):
         name = name.replace(' ', '')
         name = name.replace('\"\'', '')
         name = re.sub(r'su\.s(\d+)e(\d+)e(\d+)',
                       r"S\1E\2E\3.DUB", name, flags=re.IGNORECASE)
         return name
 
-folder = 'G:\\cartoon\\gumball\\1season\\sound\\test\\'
-outFolder = 'G:\\cartoon\\gumball\\1season\\sound\\output\\'
+    def prepare_query_get_audio(self, files) -> dict:
+        queries = []
+        mainFields = ['path', 'info']
+        if not files:
+            return {}
+        for file in files.values():
+            flag = True
+            for field in mainFields:
+                if field not in file:
+                    flag = False
+            if not flag:
+                continue
+
+            path = '"' + file['path'] + '"'
+            query = self.ffmpeg + ' -y -i ' + path
+
+            name, ext = os.path.splitext(path)
+            name = self.prepareName(name)
+            newName = name + '.mp3'
+            outName = os.path.join(os.path.dirname(self.outFolder), os.path.basename(newName))
+
+            audio = {}
+            for audioTrack in file['info']['audioTracks'].values():
+                if 'language' in audioTrack:
+                    continue
+
+                mapAudio = audioTrack['mapAudio']
+                if 'bitrate' in audioTrack:
+                    audio['bitrate'] = str(audioTrack['bitrate'])
+                else:
+                    audio['bitrate'] = self.bitrateAudio
+                audio['map'] = str(mapAudio)
+                # audio['frequency'] = audioTrack['frequency']
+
+            # query = self.ffmpeg + ' -map 0:' + audio['map'] + ' -i ' + path + ' -vn -ar ' + audio['frequency'] + ' -c:a:' + audio['map'] + '  aac -b:a ' + audio['bitrate'] + ' -f aac ' + outName
+            query = self.ffmpeg + ' -i ' + path + ' -vn ' + outName
+            query = self.ffmpeg + ' -i ' + path + ' -c:a copy ' + outName
+
+            # ffmpeg -i "G:\cartoon\gumball\1season\sound\audio\S01E01DUBx1080xTheDVD.mkv" -map 0:2 -c:a copy "G:\cartoon\gumball\1season\sound\audio\S01E01DUBx1080xTheDVD.aac"
+            
+            queries.append(query)
+            break
+        for query in queries:
+            print(query)
+        return queries
+
+
+folder = 'G:\\cartoon\\gumball\\1season\\sound\\input\\'
+outFolder = 'G:\\cartoon\\gumball\\1season\\sound\\audio\\'
 Converter = Converter(folder=folder, outFolder=outFolder, convert=True)
 Converter.run()
 

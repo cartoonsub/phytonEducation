@@ -206,6 +206,7 @@ class Converter:
         mainFields = ['path', 'info']
         if not files:
             return {}
+            
         for file in files.values():
             flag = True
             for field in mainFields:

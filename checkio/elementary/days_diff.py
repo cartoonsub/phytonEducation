@@ -1,6 +1,8 @@
 import datetime
 
 def days_diff(a, b):
+    return abs((datetime.datetime(*a)-datetime.datetime(*b)).days)
+
     dateStart = datetime.date(a[0], a[1], a[2])
     dateFinish = datetime.date(b[0], b[1], b[2])
     diff = dateFinish - dateStart

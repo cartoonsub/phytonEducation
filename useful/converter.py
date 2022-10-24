@@ -220,7 +220,7 @@ class Converter:
 
             name, ext = os.path.splitext(path)
             name = self.prepareName(name)
-            newName = name + '.mp3'
+            newName = name + '.aac'
             outName = os.path.join(os.path.dirname(self.outFolder), os.path.basename(newName))
 
             audio = {}
@@ -236,16 +236,11 @@ class Converter:
                 audio['map'] = str(mapAudio)
                 # audio['frequency'] = audioTrack['frequency']
 
+            # todo - add good query
             # query = self.ffmpeg + ' -map 0:' + audio['map'] + ' -i ' + path + ' -vn -ar ' + audio['frequency'] + ' -c:a:' + audio['map'] + '  aac -b:a ' + audio['bitrate'] + ' -f aac ' + outName
-            query = self.ffmpeg + ' -i ' + path + ' -vn ' + outName
-            query = self.ffmpeg + ' -i ' + path + ' -c:a copy ' + outName
-
-            # ffmpeg -i "G:\cartoon\gumball\1season\sound\audio\S01E01DUBx1080xTheDVD.mkv" -map 0:2 -c:a copy "G:\cartoon\gumball\1season\sound\audio\S01E01DUBx1080xTheDVD.aac"
+            query = self.ffmpeg + ' -i ' + path + ' -map 0:2 -c:a copy ' + outName
             
             queries.append(query)
-            break
-        for query in queries:
-            print(query)
         return queries
 
 

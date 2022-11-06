@@ -18,19 +18,21 @@ class Converter:
         if not files:
             print('Не найдены файлы для конвертации')
             return
-        # queries = self.prepare_query_video(files)
-        queries = self.prepare_query_get_audio(files)
+        queries = self.prepare_query(files)
         if not queries:
             print('Не удалось создать запросы для ffmpeg')
             return
-        self.convert_to_mp4(queries)
+        # self.convert_video(queries)
 
     def prepare_video(self):
         videoFiles = {}
         counter = 0
         for root, dirs, files in os.walk(self.folder):
+            pprint(root)
+            print('----------------')
             if not files:
                 continue
+            pprint(files)
 
             for file in files:
                 if not file.lower().endswith(('.mp4', 'mkv', 'avi', 'flv', 'mov', 'wmv', 'mpg', 'mpeg', 'm4v', '3gp', '3g2', 'm2ts', 'mts', 'ts', 'webm')):
@@ -99,7 +101,7 @@ class Converter:
         
         return videoInfo
 
-    def prepare_query_video(self, files) -> dict:
+    def prepare_query(self, files) -> dict:
         queries = []
         mainFields = ['path', 'info']
         if not files:
@@ -115,6 +117,8 @@ class Converter:
             path = '"' + file['path'] + '"'
             query = self.ffmpeg + ' -y -i ' + path
 
+            
+            continue
             name, ext = os.path.splitext(path)
             name = self.prepareName(name)
             newName = name + '.mp4'
@@ -138,6 +142,12 @@ class Converter:
             queries.append(query)
             # ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -c:v libx264 -b:v 5948k -pass 1 -an -f mp4  NULL
             # ffmpeg -y -i "C:\\phytonProjects\\phytonEducation\\useful\\video\\su.s05e01e02.mkv" -map 0:0 -map 0:1 -c:v:0 libx264 -b:v 5948k -pass 2 -c:a:1 aac -b:a 192k -movflags +faststart output.mp4
+        
+            query = self.prepare_query_get_audio(file, name)
+            if not query:
+                continue
+            queries.append(query)
+        
         return queries
 
     def setQueryPass1(self, file, query) -> str:
@@ -175,7 +185,7 @@ class Converter:
         
         return audio
 
-    def convert_to_mp4(self, queries):
+    def convert_video(self, queries):
         for query in queries:
             try:
                 print(query)
@@ -197,56 +207,52 @@ class Converter:
     def prepareName(self, name):
         name = name.replace(' ', '')
         name = name.replace('\"\'', '')
-        name = re.sub(r'su\.s(\d+)e(\d+)e(\d+)',
-                      r"S\1E\2E\3.DUB", name, flags=re.IGNORECASE)
-        return name
+        # name = re.sub(r'su\.s(\d+)e(\d+)e(\d+)',
+        #               r"S\1E\2E\3.DUB", name, flags=re.IGNORECASE)
 
-    def prepare_query_get_audio(self, files) -> dict:
-        queries = []
-        mainFields = ['path', 'info']
-        if not files:
-            return {}
-            
-        for file in files.values():
-            flag = True
-            for field in mainFields:
-                if field not in file:
-                    flag = False
-            if not flag:
+
+        print(name)
+        # print(matches.groups())
+        matches = re.search(r'(\d+)[x-]+(\d+).+?\[([\w\s.-]+)\]+', name, flags=re.IGNORECASE)
+        if not matches:
+            print('Не удалось получить название серии: ' + name)
+            return name
+        # name = 'S' + matches.group[1] + 'E' + matches[2] + 'DUB' + 'x1080x' + matches[3]
+        return name
+        # .zfill(2)
+
+    def prepare_query_get_audio(self, file, name) -> str:
+        query = ''
+
+        path = '"' + file['path'] + '"'
+        query = self.ffmpeg + ' -y -i ' + path
+
+        newName = name + '.aac'
+        outName = os.path.join(os.path.dirname(self.outFolder), os.path.basename(newName))
+
+        audio = {}
+        for audioTrack in file['info']['audioTracks'].values():
+            if 'language' in audioTrack:
                 continue
 
-            path = '"' + file['path'] + '"'
-            query = self.ffmpeg + ' -y -i ' + path
+            mapAudio = audioTrack['mapAudio']
+            if 'bitrate' in audioTrack:
+                audio['bitrate'] = str(audioTrack['bitrate'])
+            else:
+                audio['bitrate'] = self.bitrateAudio
+            audio['map'] = str(mapAudio)
+            # audio['frequency'] = audioTrack['frequency']
 
-            name, ext = os.path.splitext(path)
-            name = self.prepareName(name)
-            newName = name + '.aac'
-            outName = os.path.join(os.path.dirname(self.outFolder), os.path.basename(newName))
-
-            audio = {}
-            for audioTrack in file['info']['audioTracks'].values():
-                if 'language' in audioTrack:
-                    continue
-
-                mapAudio = audioTrack['mapAudio']
-                if 'bitrate' in audioTrack:
-                    audio['bitrate'] = str(audioTrack['bitrate'])
-                else:
-                    audio['bitrate'] = self.bitrateAudio
-                audio['map'] = str(mapAudio)
-                # audio['frequency'] = audioTrack['frequency']
-
-            # todo - add good query
-            # query = self.ffmpeg + ' -map 0:' + audio['map'] + ' -i ' + path + ' -vn -ar ' + audio['frequency'] + ' -c:a:' + audio['map'] + '  aac -b:a ' + audio['bitrate'] + ' -f aac ' + outName
-            query = self.ffmpeg + ' -i ' + path + ' -map 0:2 -c:a copy ' + outName
+        # todo - add good query
+        # query = self.ffmpeg + ' -map 0:' + audio['map'] + ' -i ' + path + ' -vn -ar ' + audio['frequency'] + ' -c:a:' + audio['map'] + '  aac -b:a ' + audio['bitrate'] + ' -f aac ' + outName
+        query = self.ffmpeg + ' -i ' + path + ' -map 0:2 -c:a copy ' + outName
             
-            queries.append(query)
-        return queries
+        return query
 
 
-folder = 'G:\\cartoon\\gumball\\1season\\sound\\input\\'
-outFolder = 'G:\\cartoon\\gumball\\1season\\sound\\audio\\'
-Converter = Converter(folder=folder, outFolder=outFolder, convert=True)
+folder = 'G:\\cartoon\\gumball\\4season\\input\\'
+outFolder = 'G:\\cartoon\\gumball\\4season\\output\\'
+Converter = Converter(folder=folder, outFolder=outFolder, convert=False)
 Converter.run()
 
 if __name__ == '__main__':

@@ -4,3 +4,4 @@ useful/video/*
 NULL
 ffmpeg2pass-0.log.mbtree
 .idea/*
+useful/__pycache__/*

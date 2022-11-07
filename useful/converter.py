@@ -249,9 +249,8 @@ class Converter:
             
         return query
 
-
-folder = 'G:\\cartoon\\gumball\\4season\\input\\'
-outFolder = 'G:\\cartoon\\gumball\\4season\\output\\'
+folder = 'D:\\cartoon\\gumball\\4season\\input\\'
+outFolder = 'D:\\cartoon\\gumball\\4season\\output\\'
 Converter = Converter(folder=folder, outFolder=outFolder, convert=False)
 Converter.run()
 

@@ -30,3 +30,4 @@ else:
 # print(nested_keys)
 
 print(str(22).zfill(2))
+help('modules')

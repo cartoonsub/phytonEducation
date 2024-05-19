@@ -1,21 +1,21 @@
 
-# numberOne = '1'
-# numberTwo = '1'
+numberOne = '101'
+numberTwo = '1'
 
-numberOne = str(input())
-numberTwo = str(input())
-
+# numberOne = str(input())
+# numberTwo = str(input())
 
 numberOneLenght = len(numberOne)
 numberTwoLenght = len(numberTwo)
 longest = max(numberOneLenght, numberTwoLenght)
 
-numberOne = numberOne.ljust(longest, '0')
-numberTwo = numberTwo.ljust(longest, '0')
+numberOne = numberOne.rjust(longest, '0')
+numberTwo = numberTwo.rjust(longest, '0')
 
 numberOne = numberOne[::-1]
 numberTwo = numberTwo[::-1]
 
+print(numberOne, numberTwo)
 result = ''
 remains = 0
 for index in range(longest):

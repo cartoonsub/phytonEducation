@@ -27,7 +27,8 @@ for rowIndex, columns in rowsForSearch.items():
             continue
         if column >= columnsLenght:
             continue
-        result.append(matrix[rowIndex][column])
+        value = int(matrix[rowIndex][column])
+        result.append(value)
 
 result.sort()
 print(' '.join(map(str, result)))

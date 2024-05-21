@@ -1,3 +1,4 @@
+# https://contest.yandex.ru/contest/22450/run-report/114402642/
 
 lenght = int(input())
 street = str(input()).split(' ')

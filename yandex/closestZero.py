@@ -1,9 +1,12 @@
 
-lenght = int(input())
-street = str(input()).split(' ')
+# lenght = int(input())
+# street = str(input()).split(' ')
 
 # lenght = 5
-# street = '0 7 9 4 0 8 20'.split(' ')
+
+street = '0 7 9 4 8 20'.split(' ')
+street = '64 68 37 11 77 80 48 82 0'.split(' ')
+street = '64 68 37 0 77 0 48 82 0'.split(' ')
 
 result = []
 reverseIndexes = []
@@ -19,10 +22,23 @@ for index in range(len(street)):
     
     result.append(start)
 
+print(reverseIndexes)
+print(result)
+
+startIndex = max(reverseIndexes)
+firstZero = min(reverseIndexes)
+print(startIndex, firstZero)
+flag = False
 start = 0
 lastIndex = len(result) - 1
 while lastIndex >= 0:
     value = result[lastIndex]
+    if value == 0:
+        flag = True
+    
+    if not flag:
+        lastIndex -= 1
+        continue
 
     if value == 0:
         start = 0

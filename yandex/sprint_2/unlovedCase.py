@@ -20,7 +20,9 @@ def solution(node, idx):
     node_number = 0
     current_node = node
     while current_node is not None:
-        if node_number + 1 != idx:
+        node_number += 1
+        if node_number != idx:
+            current_node = current_node.next_item
             continue
 
         next_item = current_node.next_item.next_item
@@ -41,7 +43,6 @@ def test():
     assert new_head.next_item.next_item is node3
     assert new_head.next_item.next_item.next_item is None
     # result is node0 -> node2 -> node3
-
 
 if __name__ == '__main__':
     test()

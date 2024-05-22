@@ -11,12 +11,25 @@ if LOCAL:
 
 
 def solution(node):
-    # reverse node
-    last_node = None
-    current_node = node
-    while current_node is not None:
-        print(current_node.value)
+    last_node = node
+    while last_node is not None:
+        if last_node.next is None:
+            break
+        last_node = last_node.next
 
+    head = last_node
+    while last_node is not None:
+        prev = last_node.prev
+        next = last_node.next
+
+        last_node.next = prev
+        last_node.prev = next
+
+        if prev is None:
+            break
+        last_node = prev
+
+    return head
 
 def test():
     node3 = DoubleConnectedNode("node3")

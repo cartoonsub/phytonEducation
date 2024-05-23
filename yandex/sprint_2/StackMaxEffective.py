@@ -1,46 +1,57 @@
+import sys
+
 
 class StackMaxEffective:
     def __init__(self):
         self.items = []
+        self.max_value = []
 
     def push(self, item):
         self.items.append(item)
+        if not self.max_value or item >= self.max_value[-1]:
+            self.max_value.append(item)
 
     def pop(self):
         if not self.items:
             print('error')
             return
-        self.items.pop()
-
-    def peek(self):
-        return self.items[-1]
+    
+        if self.items.pop() == self.max_value[-1]:
+            self.max_value.pop()
 
     def get_max(self):
-        if not self.items:
+        if not self.max_value:
             return None
-        return max(self.items)
+        return self.max_value[-1]
 
     def top(self):
         if not self.items:
             return 'error'
         return self.items[-1]
 
-    def print_stack(self):
-        print(self.items)
+
+def main():
+    stack = StackMaxEffective()
+
+    input_quantity = int(input())
+    for i in range(input_quantity):
+        # line = str(input())
+        line = sys.stdin.readline().rstrip()
+        if line == 'get_max':
+            print(stack.get_max())
+        elif line == 'pop':
+            stack.pop()
+        elif line == 'top':
+            print(stack.top())
+        else :
+            stack.push(int(line.split()[1]))
 
 
-stack = StackMaxEffective()
+if __name__ == '__main__':
+    main()
 
-inputQuantity = int(input())
-for i in range(inputQuantity):
-    line = str(input())
-    if line == 'get_max':
-        print(stack.get_max())
-    elif line == 'pop':
-        stack.pop()
-    elif line == 'top':
-        print(stack.top())
-    elif line.startswith('push'):
-        stack.push(int(line.split()[1]))
 
-# stack.print_stack()
+
+
+
+

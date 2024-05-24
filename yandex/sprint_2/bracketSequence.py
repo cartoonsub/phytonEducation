@@ -1,51 +1,57 @@
-import sys
-
-
-class StackMaxEffective:
-    def __init__(self):
-        self.items = []
-        self.max_value = []
-
-    def push(self, item):
-        self.items.append(item)
-        if not self.max_value or item >= self.max_value[-1]:
-            self.max_value.append(item)
-
-    def pop(self):
-        if not self.items:
-            print('error')
-            return
-    
-        if self.items.pop() == self.max_value[-1]:
-            self.max_value.pop()
-
-    def get_max(self):
-        if not self.max_value:
-            return None
-        return self.max_value[-1]
-
-    def top(self):
-        if not self.items:
-            return 'error'
-        return self.items[-1]
-
 
 def main():
-    stack = StackMaxEffective()
+    text = str(input())
+    if not text:
+        print(True)
+        return
+    first_symbol = text[0]
+    last_symbol = text[-1]
+    match last_symbol:
+        case '{':
+            print(False)
+            return
+        case '(':
+            print(False)
+            return
+        case '[':
+            print(False)
+            return
+    
+    match first_symbol:
+        case '}':
+            print(False)
+            return
+        case ')':
+            print(False)
+            return
+        case ']':
+            print(False)
+            return
 
-    input_quantity = int(input())
-    for i in range(input_quantity):
-        # line = str(input())
-        line = sys.stdin.readline().rstrip()
-        if line == 'get_max':
-            print(stack.get_max())
-        elif line == 'pop':
-            stack.pop()
-        elif line == 'top':
-            print(stack.top())
-        else :
-            stack.push(int(line.split()[1]))
-
+    stack = []
+    for symbol in text:
+        if symbol == '{' or symbol == '(' or symbol == '[':
+            stack.append(symbol)
+            continue
+        
+        if not stack:
+            print(False)
+            return
+        last_symbol = stack.pop()
+        if symbol == '}' and last_symbol != '{':
+            print(False)
+            return
+        if symbol == ')' and last_symbol != '(':
+            print(False)
+            return
+        if symbol == ']' and last_symbol != '[':
+            print(False)
+            return
+    
+    if stack:
+        print(False)
+        return
+    print(True)
 
 if __name__ == '__main__':
     main()

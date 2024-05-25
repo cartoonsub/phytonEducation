@@ -30,3 +30,9 @@ for number, quantity in score.items():
     result += quantity
 
 print(result)
+
+def main():
+    pass
+
+if __name__ == '__main__':
+    main()

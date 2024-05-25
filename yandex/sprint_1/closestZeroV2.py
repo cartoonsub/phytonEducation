@@ -1,8 +1,5 @@
 # https://contest.yandex.ru/contest/22450/run-report/114402642/
 
-lenght = int(input())
-street = str(input()).split(' ')
-
 def reverseWalk(result, index, indexEnd):
     start = 0
     while index > indexEnd:
@@ -15,28 +12,35 @@ def reverseWalk(result, index, indexEnd):
         index -= 1
         start += 1
 
-result = []
+def main():
+    lenght = int(input())
+    street = str(input()).split(' ')
 
-currentZeroIndex = None
-previousZeroIndex = None
-start = 1
+    result = []
 
-for index in range(len(street)):
-    value = int(street[index])
-    if value == 0:
-        result.append(0)
-        if previousZeroIndex is None:
-            previousZeroIndex = -1
-        else:
-            previousZeroIndex = currentZeroIndex
-        
-        currentZeroIndex = index
+    currentZeroIndex = None
+    previousZeroIndex = None
+    start = 1
 
-        reverseWalk(result, currentZeroIndex, previousZeroIndex)
-        start = 1
-        continue
+    for index in range(len(street)):
+        value = int(street[index])
+        if value == 0:
+            result.append(0)
+            if previousZeroIndex is None:
+                previousZeroIndex = -1
+            else:
+                previousZeroIndex = currentZeroIndex
+            
+            currentZeroIndex = index
 
-    result.append(start)
-    start += 1
+            reverseWalk(result, currentZeroIndex, previousZeroIndex)
+            start = 1
+            continue
 
-print(' '.join(map(str, result)))
+        result.append(start)
+        start += 1
+
+    print(' '.join(map(str, result)))
+
+if __name__ == '__main__':
+    main()

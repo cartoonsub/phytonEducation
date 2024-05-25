@@ -1,6 +1,6 @@
 import sys
 
-class MyQueueSized:
+class MyQueue:
     def __init__(self, n):
             self.queue = [None] * n
             self.head = 0
@@ -52,7 +52,7 @@ def main():
     input_quantity = int(input())
     size = int(input())
     
-    stack = MyQueueSized(size)
+    stack = MyQueue(size)
 
     for i in range(input_quantity):
         # line = str(input())

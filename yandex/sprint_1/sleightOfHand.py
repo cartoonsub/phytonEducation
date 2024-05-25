@@ -16,20 +16,27 @@ def main():
         else:
             total[number] = 1
 
-    score = {}
-    for number, quantity in total.items():
-        if quantity in score:
-            score[quantity] += 1
-        else:
-            score[quantity] = 1
-
     result = 0
-    for number, quantity in score.items():
-        if number > limit:
-            continue
-        result += quantity
-
+    # print(sum(quantity <= limit for quantity in total.values()))
+    for quantity in total.values():
+        if quantity <= limit:
+            result += 1 
     print(result)
+
+    # score = {}
+    # for number, quantity in total.items():
+    #     if quantity in score:
+    #         score[quantity] += 1
+    #     else:
+    #         score[quantity] = 1
+
+    # result = 0
+    # for number, quantity in score.items():
+    #     if number > limit:
+    #         continue
+    #     result += quantity
+
+    # print(result)
 
 
 if __name__ == '__main__':

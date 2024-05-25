@@ -45,12 +45,13 @@ class MyQueueSized:
 
 
 def main():
-    input = ['peek', 'push 5', 'push 2', 'peek', 'size', 'size', 'push 1', 'size']
-    input = ['push 1', 'size', 'push 3', 'size', 'push 1', 'pop', 'push 1', 'pop', 'push 3', 'push 3']
-    # input_quantity = int(input())
-    # size = int(input())
-    input_quantity = 10
-    size = 1
+    # input = ['peek', 'push 5', 'push 2', 'peek', 'size', 'size', 'push 1', 'size']
+    # input = ['push 1', 'size', 'push 3', 'size', 'push 1', 'pop', 'push 1', 'pop', 'push 3', 'push 3']
+    # input_quantity = 10
+    # size = 1
+    input_quantity = int(input())
+    size = int(input())
+    
     stack = MyQueueSized(size)
 
     for i in range(input_quantity):

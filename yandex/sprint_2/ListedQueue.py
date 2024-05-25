@@ -19,9 +19,9 @@ class MyQueue:
         self.tail = (self.tail + 1) % self.max_n
         self.size += 1 
 
-    def pop(self):
+    def get(self):
         if self.is_empty():
-            return None
+            return 'error'
         x = self.queue[self.head];
         self.queue[self.head] = None;
         self.head = (self.head + 1) % self.max_n;
@@ -45,25 +45,25 @@ class MyQueue:
 
 
 def main():
-    # input = ['peek', 'push 5', 'push 2', 'peek', 'size', 'size', 'push 1', 'size']
-    # input = ['push 1', 'size', 'push 3', 'size', 'push 1', 'pop', 'push 1', 'pop', 'push 3', 'push 3']
-    # input_quantity = 10
-    # size = 1
+    # # 10
+    # input = ['put -34', 'put -23', 'get', 'size', 'get', 'size', 'get', 'get', 'put 80', 'size']
+    # # 6
+    # input = ['put -66', 'put 98', 'size', 'size', 'get', 'get']
+    # # 9
+    # input = ['get', 'size', 'put 74', 'get', 'size', 'put 90', 'size', 'size', 'size']
+    # input_quantity = 9
+
     input_quantity = int(input())
-    size = int(input())
-    
-    stack = MyQueue(size)
+    stack = MyQueue(input_quantity)
 
     for i in range(input_quantity):
         # line = str(input())
         # line = input[i]
         line = sys.stdin.readline().rstrip()
-        if line == 'peek':
-            print(stack.peek())
+        if line == 'get':
+            print(stack.get())
         elif line == 'size':
             print(stack.size)
-        elif line == 'pop':
-            print(stack.pop())
         else:
             stack.push(int(line.split()[1]))
 

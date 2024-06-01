@@ -54,14 +54,18 @@ class MyQueueSized:
 
 
     def pop_front(self):
-        if self.queue[self.front_index] is None:
+        if self.pointer[0] is None:
             print('error')
             return
         
-        value = self.queue[self.front_index]
+        if self.queue[self.pointer[0]] is None:
+            print('error')
+            return
+        
+        value = self.queue[self.pointer[0]]
         print(value)
-        self.queue[self.front_index] = None
-        self.front_index = (self.front_index - 1)
+        self.queue[self.pointer[0]] = None
+        self.pointer[0] = (self.pointer[0] - 1) % self.size
     
     def pop_back(self):
         print('index', self.back_index)
@@ -150,6 +154,9 @@ def main():
     Deck.push_back(12)
     Deck.push_front(10)
     Deck.push_front(10)
+
+
+    Deck.pop_back()
 
     print(Deck.peek())
     print(Deck.pointer)

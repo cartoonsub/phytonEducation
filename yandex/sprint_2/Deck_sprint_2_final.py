@@ -1,30 +1,56 @@
 import sys
 
-# Всё фигня
-# нет лимита на добавление элементов
-# подумать как сделать правильный кольцевой буфер
+# print((8 + 1) % 10)
+# exit()
 
 class MyQueueSized:
     def __init__(self, n):
         self.queue = [None] * n
-        self.front_index = 0
-        self.back_index = n - 1
+        self.pointer = [None, None]
+        self.size = n
+        self.current_size = 0
 
     def push_front(self, value):
-        if self.queue[self.front_index] is not None:
+        if self.current_size >= self.size:
             print('error')
             return
 
-        self.queue[self.front_index] = value
-        self.front_index = (self.front_index + 1)
+        if self.pointer[0] is None:
+            self.pointer[0] = 0
+        if self.pointer[1] is None:
+            self.pointer[1] = 0
+        
+        index = self.pointer[0]
+        if self.queue[index] is not None:
+            index = (index + 1) % self.size
+
+        if self.queue[index] is not None:
+            return
+
+        self.queue[index] = value
+        self.pointer[0] = index
+        self.current_size += 1
 
     def push_back(self, value):
-        if self.queue[self.back_index] is not None:
+        if self.current_size >= self.size:
             print('error')
             return
+
+        if self.pointer[1] is None:
+            self.pointer[1] = 0
+        if self.pointer[0] is None:
+            self.pointer[0] = 0
         
-        self.queue[self.back_index] = value
-        self.back_index = (self.back_index - 1)
+        index = self.pointer[1]
+        if self.queue[index] is not None:
+            index = (index - 1) % self.size
+
+        if self.queue[index] is not None:
+            return
+
+        self.queue[index] = value
+        self.pointer[1] = index
+        self.current_size += 1
 
 
     def pop_front(self):
@@ -35,16 +61,10 @@ class MyQueueSized:
         value = self.queue[self.front_index]
         print(value)
         self.queue[self.front_index] = None
-        # if self.is_empty():
-        #     print('error')
-        #     return None
-        # x = self.queue[self.head]
-        # self.queue[self.head] = None
-        # self.head = (self.head + 1) % self.max_n
-        # self.size -= 1
-        # return x
+        self.front_index = (self.front_index - 1)
     
     def pop_back(self):
+        print('index', self.back_index)
         if self.queue[self.back_index] is None:
             print('error')
             return
@@ -52,6 +72,7 @@ class MyQueueSized:
         value = self.queue[self.back_index]
         print(value)
         self.queue[self.back_index] = None
+        self.front_index = (self.back_index + 1)
 
 
     def peek(self):
@@ -62,13 +83,17 @@ def main():
     input_quantity = 7
     deck_size = 10
     input = [
-        'push_front -855',
-        'push_front 0',
-        'pop_back',
-        'pop_back',
-        'push_back 844',
-        'pop_back',
-        'push_back 823'
+        'pssssush_front -855',
+        'psssush_front 0',
+        'psop_back',
+        'psop_back',
+        # 'push_back 844',
+        # 'pop_back',
+        # 'push_back 823'
+        '',
+        '',
+        ''
+
     ]
 
     # input_quantity = 4
@@ -80,16 +105,16 @@ def main():
     #     'pop_back',
     # ]
 
-    input_quantity = 6
-    deck_size = 6
-    input = [
-        'push_front -201',
-        'push_back 959',
-        'push_back 102',
-        'push_front 20',
-        'pop_front',
-        'pop_back',
-    ]
+    # input_quantity = 6
+    # deck_size = 6
+    # input = [
+    #     'push_front -201',
+    #     'push_back 959',
+    #     'push_back 102',
+    #     'push_front 20',
+    #     'pop_front',
+    #     'pop_back',
+    # ]
     # 20
     # 102
     # input_quantity = int(input())
@@ -113,7 +138,20 @@ def main():
         elif 'push_front' in line:
             Deck.push_front(int(line.split()[-1]))
 
-    print(Deck.peek())
 
+    Deck.push_front(10)
+    Deck.push_back(12)
+    Deck.push_back(12)
+    Deck.push_front(10)
+    Deck.push_back(12)
+    Deck.push_back(12)
+    Deck.push_back(12)
+    Deck.push_front(10)
+    Deck.push_back(12)
+    Deck.push_front(10)
+    Deck.push_front(10)
+
+    print(Deck.peek())
+    print(Deck.pointer)
 if __name__ == '__main__':
     main()

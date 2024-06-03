@@ -1,9 +1,8 @@
-import sys
 
 
 '''
 -- ПРИНЦИП РАБОТЫ --
-Класс MyQueueSized реализует структуру данных "очередь" 
+Класс Deck реализует структуру данных "очередь" 
 с операциями добавления и удаления элементов с обоих концов. 
 Очередь реализована как кольцевой буфер, что позволяет эффективно добавлять и удалять элементы 
 без необходимости перемещения остальных элементов.
@@ -23,7 +22,7 @@ import sys
 Это объясняется тем, что очередь хранит максимум n элементов.
 '''
 
-class MyQueueSized:
+class Deck:
     def __init__(self, n):
         self.queue = [None] * n
         self.pointer = [None, None]
@@ -116,10 +115,10 @@ def main():
     input_quantity = int(input())
     deck_size = int(input())
 
-    deck = MyQueueSized(deck_size)
+    deck = Deck(deck_size)
 
     for i in range(input_quantity):
-        line = sys.stdin.readline().rstrip()
+        line = input()
         if line == 'pop_front':
             deck.pop_front()
         elif line == 'pop_back':

@@ -1,4 +1,5 @@
 
+# https://contest.yandex.ru/contest/22781/run-report/114902164/
 
 '''
 -- ПРИНЦИП РАБОТЫ --

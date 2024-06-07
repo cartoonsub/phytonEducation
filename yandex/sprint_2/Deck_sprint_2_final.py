@@ -3,7 +3,7 @@
 
 '''
 -- ПРИНЦИП РАБОТЫ --
-Класс Deck реализует структуру данных "очередь" 
+Класс Deckue реализует структуру данных "очередь" 
 с операциями добавления и удаления элементов с обоих концов. 
 Очередь реализована как кольцевой буфер, что позволяет эффективно добавлять и удалять элементы 
 без необходимости перемещения остальных элементов.
@@ -15,25 +15,24 @@
 Во всех остальных случаях операции выполняются корректно.
 
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-Временная сложность всех операций константна, O(1), 
+Временная сложность всех операций константна, O(1),
 потому что каждая операция выполняет фиксированное количество действий, не зависящее от размера очереди.
 
 -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
 Пространственная сложность алгоритма равна O(n), где n - максимальный размер очереди. 
-Это объясняется тем, что очередь хранит максимум n элементов.
+Это объясняется тем, что очередь хранит максимум m элементов.
 '''
 
-class Deck:
-    def __init__(self, n):
-        self.queue = [None] * n
+class Deque:
+    def __init__(self, m):
+        self.queue = [None] * m
         self.pointer = [None, None]
-        self.size = n
+        self.size = m
         self.current_size = 0
 
     def push_front(self, value):
         if self.current_size >= self.size:
-            print('error')
-            return
+            raise IndexError
 
         if self.pointer[0] is None:
             self.pointer[0] = 0
@@ -53,8 +52,7 @@ class Deck:
 
     def push_back(self, value):
         if self.current_size >= self.size:
-            print('error')
-            return
+            raise IndexError
 
         if self.pointer[1] is None:
             self.pointer[1] = 0
@@ -74,39 +72,37 @@ class Deck:
 
     def pop_front(self):
         if self.pointer[0] is None:
-            print('error')
-            return
+            raise IndexError
         
         if self.queue[self.pointer[0]] is None:
-            print('error')
             self.pointer[0] = 0
-            return
+            raise ValueError
         
         value = self.queue[self.pointer[0]]
-        print(value)
         self.queue[self.pointer[0]] = None
         self.pointer[0] = (self.pointer[0] - 1) % self.size
         self.current_size -= 1
         if self.current_size == 0:
             self.pointer = [None, None]
+
+        return value
     
     def pop_back(self):
         if self.pointer[1] is None:
-            print('error')
-            return
+            raise IndexError
         
         if self.queue[self.pointer[1]] is None:
-            print('error')
             self.pointer[1] = 0
-            return
+            raise ValueError
         
         value = self.queue[self.pointer[1]]
-        print(value)
         self.queue[self.pointer[1]] = None
         self.pointer[1] = (self.pointer[1] + 1) % self.size
         self.current_size -= 1
         if self.current_size == 0:
             self.pointer = [None, None]
+        
+        return value
 
     def peek(self):
         return self.queue
@@ -114,20 +110,22 @@ class Deck:
 
 def main():
     input_quantity = int(input())
-    deck_size = int(input())
-
-    deck = Deck(deck_size)
+    deque_size = int(input())
+    deckue = Deque(deque_size)
 
     for i in range(input_quantity):
-        line = input()
-        if line == 'pop_front':
-            deck.pop_front()
-        elif line == 'pop_back':
-            deck.pop_back()
-        elif 'push_back' in line:
-            deck.push_back(int(line.split()[-1]))
-        elif 'push_front' in line:
-            deck.push_front(int(line.split()[-1]))
+        try: 
+            line = input()
+            if line == 'pop_front':
+                print(deckue.pop_front())
+            elif line == 'pop_back':
+                print(deckue.pop_back())
+            elif 'push_back' in line:
+                deckue.push_back(int(line.split()[-1]))
+            elif 'push_front' in line:
+                deckue.push_front(int(line.split()[-1]))
+        except IndexError:
+            print('error') 
 
 
 if __name__ == '__main__':

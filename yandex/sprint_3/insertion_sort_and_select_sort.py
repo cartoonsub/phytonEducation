@@ -11,7 +11,7 @@ def insertion_sort(array):
     print('step {}, sorted {} elements: {}'.format(i, i+1, array))
 
   print(array)
-insertion_sort([11, 2, 9, 7, 1])
+insertion_sort([11, 2, 0, 9, 7, 1])
 # step 1, sorted 2 elements: [2, 11, 9, 7, 1]
 # step 2, sorted 3 elements: [2, 9, 11, 7, 1]
 # step 3, sorted 4 elements: [2, 7, 9, 11, 1]

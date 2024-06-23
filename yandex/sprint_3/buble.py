@@ -1,6 +1,7 @@
 
 def sortBubble(inputArray: list, lenght: int) -> None:
     swap = True
+    wasSwap = False
     while swap:
         if lenght == 0:
             break
@@ -10,15 +11,23 @@ def sortBubble(inputArray: list, lenght: int) -> None:
             b = inputArray[i + 1]
             if a > b:
                 swap = True
+                wasSwap = True
                 inputArray[i] = b
                 inputArray[i + 1] = a
-        
+
         if swap == False:
             break
         else:
             lenght -= 1
 
         print(' '.join(map(str, inputArray)).strip())
+    
+    if wasSwap == False:
+        print(' '.join(map(str, inputArray)).strip())
+
+
+
+
 
 def bubble_sort_classic(lst):
     n = len(lst) - 1
@@ -30,13 +39,10 @@ def bubble_sort_classic(lst):
     return lst
 
 
-
-
 lenght = int(input())
 input = input()
+
 inputArray = list(map(int, input.split()))
 length = len(inputArray) - 1
 
 sortBubble(inputArray, length)
-
-

@@ -1,13 +1,29 @@
 
 def getBiggestNumber(numbers: list) -> int:
-    print(numbers)
-    pass
+    array = insertion_sort(numbers)
+    return int(''.join(array))
 
-# lenght = int(input())
-# input = input()
 
-input = '15 56 2'
+def insertion_sort(array):
+  for i in range(1, len(array)):
+    item_to_insert = array[i]
+    j = i
 
-numbers = list(map(int, input.split()))
-getBiggestNumber(numbers)
+    while j > 0 and item_to_insert > getFirstDigit(array[j-1]):
+      array[j] = array[j-1]
+      j -= 1
+    array[j] = item_to_insert
+
+  return array
+
+
+def getFirstDigit(number: str) -> int:
+    return number[0]
+
+
+lenght = int(input())
+input = input()
+
+numbers = list(map(str, input.split()))
+print(getBiggestNumber(numbers))
 

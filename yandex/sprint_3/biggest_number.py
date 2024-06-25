@@ -18,37 +18,19 @@ def insertion_sort(array):
 
 
 def compareTwoNumbers(a: str, b: str) -> int:
-    if (int(a) == int(b)):
-        return 0
-    
-    if a[0] > b[0]:
+    firstNumber = int(''.join(a + b))
+    secondNumber = int(''.join(b + a))
+    if firstNumber > secondNumber:
         return 1
 
-    if a[0] < b[0]:
-        return 0
-
-    maximum = max(len(a), len(b))
-    last_a = 0
-    last_b = 0
-
-    for i in range(maximum):
-        if (len(a)) > i:
-            last_a = int(a[i])
-
-        if (len(b)) > i:
-            last_b = int(b[i])
-            
-        if last_a > last_b:
-            return 1
-        
-        if last_a < last_b:
-            return 0
-    
     return 0
 
 
 lenght = int(input())
 input = input()
-
 numbers = list(map(str, input.split()))
 print(getBiggestNumber(numbers))
+
+
+
+
